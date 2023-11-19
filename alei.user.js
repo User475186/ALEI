@@ -1,13 +1,624 @@
 // ==UserScript==
-// @name         ALE Improvements
+// @name         ALEI+
 // @version      3.5
 // @description  Changes to make ALE better.
-// @author       mici1234, wanted2001
+// @author       mici1234, wanted2001, User475186
 // @match        *://www.plazmaburst2.com/level_editor/map_edit.php*
 // @run-at       document-end
 // @icon         https://github.com/ZenoABC/ALEI/blob/main/icon.png?raw=true
 // @grant        none
 // ==/UserScript==
+
+// ALE+
+
+{
+
+let script = document.createElement("script");
+
+script.src = "data:text," + escape(`
+
+// Style
+
+let saveMap = document.getElementsByClassName("field_btn")[0];
+let leftPanel = document.getElementById("left_panel");
+let download = document.createElement("a");
+let p = document.createElement("p");
+
+p.style.fontSize = "16px";
+p.style.fontFamily = "monospace";
+p.style.color = "#eee";
+p.style.backgroundColor = "#000";
+p.style.padding = "6px";
+p.style.width = "fit-content";
+p.style.borderRadius = "4px";
+p.style.wordBreak = "break-all";
+p.style.position = "absolute";
+p.style.left = "-100px";
+p.style.top = "-100px";
+
+document.body.append(p);
+
+function updateStyle() {
+	let topPanel = document.getElementById("top_panel");
+	let rightPanel = document.getElementById("right_panel");
+	let objectBoxHider = document.getElementById("objboxhider");
+	let versionRights = document.getElementById("version_rights");
+	let editAsText;
+	let rights = document.getElementsByClassName("field_dis_left")[1];
+	let mapRights = document.getElementById("maprights");
+	let parambox = document.getElementById("parambox");
+	let versionText = versionRights.childNodes[0];
+
+	let buttonElements = document.getElementsByClassName("tool_btn tool_wid");
+
+	for (let i = 0; i < buttonElements.length; i++) {
+		if (buttonElements[i].style.width == "100%") {
+			editAsText = buttonElements[i];
+		}
+	}
+
+	topPanel.style.backgroundColor = "rgb(8, 8, 8)";
+	leftPanel.style.backgroundColor = "rgb(8, 8, 8)";
+	rightPanel.style.backgroundColor = "rgb(8, 8, 8)";
+
+	topPanel.style.backgroundImage = "none";
+	leftPanel.style.backgroundImage = "none";
+	rightPanel.style.backgroundImage = "none";
+
+	objectBoxHider.style.marginBottom = "4px";
+
+	if (editAsText) {
+		editAsText.style.marginTop = "4px";
+	}
+
+	versionRights.style.marginTop = "4px";
+	versionRights.style.width = "240px";
+	versionText.style.fontSize = "16px";
+	versionText.style.fontFamily = "monospace";
+	versionText.style.fontWeight = "bold";
+	versionText.style.color = "#FFFF00";
+	versionText.style.width = "230px";
+	versionText.innerHTML = "ALEI+ by mici1234 & gCP5o";
+
+	if (innerWidth >= 1510) {
+		versionRights.style.display = "block";
+	} else {
+		versionRights.style.display = "none";
+	}
+
+	if (innerWidth >= 1280) {
+		rights.style.display = "inline-block";
+		mapRights.style.display = "inline-block";
+	} else {
+		rights.style.display = "none";
+		mapRights.style.display = "none";
+	}
+
+	topPanel.style.height = "48px";
+
+	leftPanel.style.top = "48px";
+	rightPanel.style.top = "48px";
+
+	document.querySelectorAll("*").forEach(elem => {
+		if (elem.className != "notediv" && elem != versionText && elem != p) {
+			if (elem.parentElement) {
+				if (elem.parentElement.parentElement) {
+					if (elem.parentElement.parentElement != parambox && elem.parentElement.className != "pa2 p_u2" && elem.parentElement.parentElement.className != "pa2 p_u2") {
+						elem.style.color = "#aaa";
+						elem.style.opacity = 1;
+					}
+				} else {
+					if (elem.parentElement.parentElement != parambox && elem.parentElement.className != "pa2 p_u2") {
+						elem.style.color = "#aaa";
+						elem.style.opacity = 1;
+					}
+				}
+			}
+
+			if (elem.style.marginTop == "-100px") {
+				elem.style.marginTop = "";
+			}
+
+			if (elem.getBoundingClientRect().y == 48 && elem.className == "field_btn") {
+				elem.style.marginTop = "-100px";
+			}
+
+			if (elem.title) {
+				elem.dataset.title = elem.title;
+				elem.title = "";
+			}
+		}
+	});
+}
+
+function downloadXML() {
+	let newstr = "";
+
+	for (let i = 0; i < es.length; i++) {
+		if (es[i].exists) {
+			newstr += compi_obj(i);
+		}
+	}
+
+	download.href = "data:text," + escape(newstr);
+	download.download = mapid_field.value + ".xml";
+
+	download.click();
+	download.href = "";
+}
+
+document.querySelectorAll("input").forEach(elem => {
+	if (elem.onclick == "function onclick(event) {\\nwindow.open('../level_editor_manual/','_blank');\\n}") {
+		elem.onclick = function() {
+			window.open("https://eaglepb2.gitbook.io/pb2-editor-manual/");
+		}
+
+		elem.dataset.title = "Editor Manual by EaglePB2";
+	}
+
+	if (elem.onclick == "function onclick(event) {\\nTestMap()\\n}") {
+		elem.onclick = function() {
+			downloadXML();
+		}
+
+		elem.value = "Download XML";
+	}
+});
+
+llcGIODil = "#111";
+licOIODIl = "48px";
+
+need_redraw = 1;
+
+document.onmousedown = function() {
+	setTimeout(function() {
+		updateStyle();
+	}, 100);
+}
+
+document.onmouseup = function() {
+	setTimeout(function() {
+		updateStyle();
+	}, 100);
+}
+
+document.addEventListener("mousemove", e => {
+	if (e.target.dataset.title) {
+		p.style.left = e.clientX + 20 + "px";
+		p.style.top = e.clientY + "px";
+		p.innerHTML = e.target.dataset.title;
+
+		if (p.getBoundingClientRect().height != 31) {
+			p.style.left = "0px";
+			p.style.left = e.clientX - 20 - p.getBoundingClientRect().width + "px";
+		}
+	} else if (e.target.parentElement) {
+		if (e.target.parentElement.dataset.title) {
+			p.style.left = e.clientX + 20 + "px";
+			p.style.top = e.clientY + "px";
+			p.innerHTML = e.target.parentElement.dataset.title;
+
+			if (p.getBoundingClientRect().height != 31) {
+				p.style.left = "0px";
+				p.style.left = e.clientX - 20 - p.getBoundingClientRect().width + "px";
+			}
+		} else {
+			p.style.left = "-100px";
+			p.style.top = "-100px";
+		}
+	} else {
+		p.style.left = "-100px";
+		p.style.top = "-100px";
+	}
+});
+
+document.body.onresize = function() {
+	updateStyle();
+	resize();
+}
+
+document.body.onload = function() {
+	ThemeSet(THEME_DARK);
+	updateStyle();
+}
+
+function findObjects(name) {
+	let notFound = 1;
+
+	for (let i = 0; i < es.length; i++) {
+		es[i].selected = 0;
+
+		if (es[i].pm.uid) {
+			if (es[i].pm.uid.includes(name) && MatchLayer(es[i])) {
+				es[i].selected = 1;
+				notFound = 0;
+			}
+		}
+	}
+
+	need_GUIParams_update = 1;
+	need_redraw = 1;
+
+	setTimeout(function() {
+		updateStyle();
+	}, 100);
+
+	return notFound;
+}
+
+document.addEventListener("keydown", e => {
+	if (e.ctrlKey && e.code == "KeyS") {
+		e.preventDefault();
+		saveMap.click();
+	}
+
+	if (e.ctrlKey && e.code == "KeyF") {
+		e.preventDefault();
+
+		let name = prompt("Find objects:", "");
+
+		if (name !== null && name !== "") {
+			let notFound = findObjects(name);
+
+			if (notFound) {
+				alert("Nothing found.");
+			}
+		}
+	}
+
+	if (e.ctrlKey && e.code == "KeyZ") {
+		setTimeout(function() {
+			updateStyle();
+		}, 100);
+	}
+
+	if (e.ctrlKey && e.code == "KeyY") {
+		setTimeout(function() {
+			updateStyle();
+		}, 100);
+	}
+
+	if (e.code == "KeyR" && canvas_focus) {
+		let selected = [];
+
+		for (let i = 0; i < es.length; i++) {
+			if (es[i].selected) {
+				selected.push(es[i]);
+			}
+		}
+
+		let minX = 1e+6;
+		let minY = 1e+6;
+
+		for (let i = 0; i < selected.length; i++) {
+			if (selected[i].pm.x < minX) {
+				minX = selected[i].pm.x;
+			}
+
+			if (selected[i].pm.y < minY) {
+				minY = selected[i].pm.y;
+			}
+		}
+
+		for (let i = 0; i < selected.length; i++) {
+			if (selected[i].pm.hasOwnProperty("w")) {
+				let save = selected[i].pm.w;
+
+				selected[i].pm.w = selected[i].pm.h;
+				selected[i].pm.h = save;
+
+				let offsetX = selected[i].pm.x - minX;
+				let offsetY = selected[i].pm.y - minY;
+
+				selected[i].pm.x = minX + offsetY;
+				selected[i].pm.y = minY + offsetX;
+			}
+		}
+
+		need_GUIParams_update = 1;
+
+		setTimeout(function() {
+			updateStyle();
+		}, 100);
+	}
+});
+
+document.addEventListener("keyup", e => {
+	if (e.key == "Alt") {
+		e.preventDefault();
+	}
+});
+
+active_layers = "";
+
+NewNote("ALE+ by gCP5o", "#FF0");
+NewNote("ALEI by mici1234", "#FF0");
+
+// Logic
+
+function CopyToClipBoard(ClipName) {
+    var str = llcDlCl;
+    var clipboard = new Array();
+    for (var i = 0; i < es.length; i++)
+        if (es[i].exists)
+            if (es[i].selected)
+                if (MatchLayer(es[i])) {
+                    clipboard[clipboard.length] = es[i];
+                }
+    str = serialize(clipboard);
+    localStorage[ClipName] = str;
+}
+
+function PasteFromClipBoard(ClipName) {
+    var clipboard = new Object();
+    if (localStorage[ClipName] == undefined) {
+        return false;
+    }
+    clipboard = unserialize(localStorage[ClipName]);
+    lcz();
+    for (var i = 0; i < es.length; i++)
+        if (es[i].exists) {
+            if (es[i].selected) {
+                ldn(llCGIcGIl + i + liOGlOGIl);
+                lnd(llCGIcGIl + i + llODiCOil);
+                es[i].selected = false;
+            }
+        }
+    var min_x = 0;
+    var max_x = 0;
+    var min_y = 0;
+    var max_y = 0;
+    i = 0;
+    var from_obj = es.length;
+    while (typeof (clipboard[i]) !== llcGiOl) {
+        var newparam = es.length;
+        ldn(llCGIcGIl + newparam + licGICDll);
+        lnd(llCGIcGIl + newparam + llcGiCDil);
+        es[newparam] = new E(clipboard[i]._class);
+        for (param in clipboard[i]) {
+            es[newparam][param] = clipboard[i][param];
+        }
+        if (typeof (es[newparam].pm.x) !== llcGiOl)
+            if (typeof (es[newparam].pm.y) !== llcGiOl) {
+                if (i == 0) {
+                    min_x = es[newparam].pm.x;
+                    min_y = es[newparam].pm.y;
+                    max_x = es[newparam].pm.x;
+                    max_y = es[newparam].pm.y;
+                    if (typeof (es[newparam].pm.w) !== llcGiOl)
+                        if (typeof (es[newparam].pm.h) !== llcGiOl) {
+                            min_x += es[newparam].pm.w / 2;
+                            max_x += es[newparam].pm.w / 2;
+                            min_y += es[newparam].pm.h / 2;
+                            max_y += es[newparam].pm.h / 2;
+                        }
+                } else {
+                    min_x = Math.min(min_x, es[newparam].pm.x);
+                    min_y = Math.min(min_y, es[newparam].pm.y);
+                    max_x = Math.max(max_x, es[newparam].pm.x);
+                    max_y = Math.max(max_y, es[newparam].pm.y);
+                    if (typeof (es[newparam].pm.w) !== llcGiOl)
+                        if (typeof (es[newparam].pm.h) !== llcGiOl) {
+                            max_x = Math.max(max_x, es[newparam].pm.x + es[newparam].pm.w);
+                            max_y = Math.max(max_y, es[newparam].pm.y + es[newparam].pm.h);
+                        }
+                }
+            }
+        i++;
+    }
+    ldn(lICGicDll);
+    ldn(llODiCGil);
+    ldn(lICOIcDIl);
+    lnd(llCOlcDIl);
+    lnd(llOGiODIl);
+    lnd(lICDiCOIl);
+    ldis = true;
+    paint_draw_mode = true;
+    quick_pick_ignore_one_click = true;
+    m_drag_x = mouse_x;
+    m_drag_y = mouse_y;
+    lmdrwa = lmwa;
+    lmdrwb = lmwb;
+    var lo_x = lmwa - (max_x + min_x) / 2;
+    var lo_y = lmwb - (max_y + min_y) / 2;
+    for (var i2 = from_obj; i2 < es.length; i2++) {
+        if (typeof (es[i2].pm.uid) !== llcGiOl) {
+            var old_uid = es[i2].pm.uid;
+            es[i2].exists = false;
+            es[i2].pm.uid = RandomizeName(es[i2].pm.uid);
+            es[i2].exists = true;
+            for (var i3 = from_obj; i3 < es.length; i3++) {
+                for (param in es[i3].pm) {
+                    if (typeof (es[i3].pm[param]) == llcGICl) {
+                        if (es[i3].pm[param] == old_uid) {
+                            es[i3].pm[param] = es[i2].pm.uid;
+                        }
+                    }
+                }
+            }
+        }
+        if (typeof (es[i2].pm.x) !== llcGiOl)
+            if (typeof (es[i2].pm.y) !== llcGiOl) {
+                lnd(llCGIcGIl + i2 + llcGiODil + es[i2].pm.x + liODlcGIl);
+                lnd(llCGIcGIl + i2 + liODlcDil + es[i2].pm.y + liODlcGIl);
+                es[i2].pm.x += lo_x;
+                es[i2].pm.y += lo_y;
+                es[i2].fixPos();
+                ldn(llCGIcGIl + i2 + llcGiODil + es[i2].pm.x + liODlcGIl);
+                ldn(llCGIcGIl + i2 + liODlcDil + es[i2].pm.y + liODlcGIl);
+            }
+    }
+    lfz(false);
+    return true;
+}
+
+function setletedit(val1, val2, defval) {
+    quick_pick = false;
+    quick_pick_ignore_one_click = false;
+	if (val1.indexOf) {
+		if (val1.indexOf(lIOGiCOl) != -1) {
+			defval = Math.abs(Number(defval));
+			var txt = prompt(lIODlODil, defval);
+			var gotval;
+			if (txt == null || txt == llcDlCl) {
+				gotval = Math.abs(defval);
+			} else {
+				gotval = Math.abs(txt);
+			}
+			val1 = eval(val1.replace(lIOGiCOl, gotval));
+			val2 = val2.replace(llOGICDil, gotval);
+		} else if (val1.indexOf(lICOlCOil) != -1) {
+			defval = Math.abs(Number(defval));
+			var gotval = prompt(liCDlcDil, defval);
+			if (gotval.charAt(0) != llOGICDil) {
+				gotval = llOGICDil + gotval;
+			}
+			if (gotval.length != 7)
+				alert(liCGICDll + gotval + licOiOOil);
+			val1 = val1.replace(lICOlCOil, gotval);
+			val2 = val2.replace(llOGICDil, gotval);
+		}
+	}
+    ff.value = llOGIcDIl + val1 + llCGICOIl + val2 + llOOICDll;
+    lettarget.innerHTML = ff.value;
+    ff.style.display = lIOGIOGll;
+    ff_drop.style.display = lIOGIOGll;
+    letediting = false;
+    UpdatePhysicalParam((lettarget.id.replace(lIcDIOOIl, llcDlCl)), val1);
+    var parameter_updated = lettarget.id.replace(lIcDIOOIl, llcDlCl);
+    if (parameter_updated == lICGICl || (parameter_updated.indexOf(llCDiOOl) != -1 && parameter_updated.indexOf(licOIcGl) != -1))
+        StreetMagic();
+}
+
+function stopedit(e) {
+	if (e) {
+		if (e.keyCode == 13 && e.type == "keydown") {
+			let chvalue = ff.value;
+
+			if (!isNaN(Number(chvalue))) {
+				UpdatePhysicalParam((lettarget.id.replace(lIcDIOOIl, llcDlCl)), Number(chvalue));
+
+				lettarget.innerHTML = chvalue;
+
+				need_GUIParams_update = 1;
+
+				setTimeout(function() {
+					updateStyle();
+				}, 100);
+			} else {
+				chvalue = chvalue.replaceAll("<", "&lt;");
+				chvalue = chvalue.replaceAll(">", "&gt;");
+				chvalue = chvalue.replaceAll('"', "&quot;");
+
+				UpdatePhysicalParam((lettarget.id.replace(lIcDIOOIl, llcDlCl)), chvalue);
+
+				lettarget.innerHTML = chvalue;
+
+				need_GUIParams_update = 1;
+
+				setTimeout(function() {
+					updateStyle();
+				}, 100);
+			}
+		}
+	}
+}
+
+function UpdatePhysicalParam(paramname, chvalue) {
+    lcz();
+    var layer_mismatch = false;
+    var list_changes = llcDlCl;
+    for (var elems = 0; elems < es.length; elems++)
+        if (es[elems].exists)
+            if (es[elems].selected) {
+                if (es[elems].pm.hasOwnProperty(paramname)) {
+                    if (MatchLayer(es[elems])) {
+                        var lup = (typeof (paramname) == llcGICl) ? llcOIODll + paramname + llcOIODll : paramname;
+                        if (typeof (chvalue) == lICDIODIl || chvalue == 0) {
+                            lnd(llCGIcGIl + elems + llCDlODll + lup + licDICOIl + es[elems].pm[paramname] + liODlcGIl);
+                            ldn(llCGIcGIl + elems + llCDlODll + lup + licDICOIl + chvalue + liODlcGIl);
+
+							if (chvalue !== "") {
+								es[elems].pm[paramname] = Number(chvalue);
+							} else {
+								es[elems].pm[paramname] = "";
+							}
+                        } else if (typeof (chvalue) == llcGICl) {
+                            lnd(llCGIcGIl + elems + llCDlODll + lup + llCGicOIl + es[elems].pm[paramname] + llOGicGIl);
+                            ldn(llCGIcGIl + elems + llCDlODll + lup + llCGicOIl + chvalue + llOGicGIl);
+                            es[elems].pm[paramname] = chvalue;
+                        } else {
+                            alert(llOOlCOll + typeof (chvalue));
+                        }
+                        list_changes += llODlOOIl + paramname + lIcOicDil + (es[elems].pm.uid != null ? es[elems].pm.uid : es[elems]._class) + llOGIOGil + chvalue + llcGICOil;
+                    } else
+                        layer_mismatch = true;
+                }
+            }
+    need_redraw = true;
+    NewNote(llCGicDll + list_changes, note_passive);
+    if (layer_mismatch)
+        NewNote(liCDlcGll, note_neutral);
+    lfz(false);
+}
+
+document.addEventListener("keydown", e => {
+	if (e.code == "AltLeft" && letediting) {
+		let value = prompt("Enter string-value:", "");
+
+		if (value !== null) {
+			setletedit(value, "Custom Value", "");
+
+			need_GUIParams_update = 1;
+
+			setTimeout(function() {
+				updateStyle();
+			}, 100);
+		}
+	}
+
+	if (e.code == "AltRight") {
+		let value = prompt("Enter snapping:", "");
+
+		if (value !== null) {
+			GridSnappingSet(Math.round(value * 10));
+
+			setTimeout(function() {
+				updateStyle();
+			}, 100);
+		}
+	}
+});
+
+function DeleteSelection() {
+    lcz();
+    for (var i = 0; i < es.length; i++)
+        if (es[i].exists)
+            if (es[i].selected)
+                if (MatchLayer(es[i])) {
+                    ldn(llCGIcGIl + i + liCDlODIl + i + llcGiCDil);
+                    lnd(llCGIcGIl + i + llCOlODIl + es[i].selected + liOGicGll + i + lIcOICDll + es[i].exists + liODlcGIl);
+                }
+    lfz(true);
+    need_GUIParams_update = true;
+    need_redraw = true;
+
+	setTimeout(function() {
+		updateStyle();
+	}, 100);
+}
+
+console.clear();
+
+`);
+
+document.body.append(script);
+
+}
+
+// ALEI
+
+{
 
 // Shorthand things
 function $id(id) {
@@ -444,10 +1055,6 @@ function updateButtons() {
     let topPanel = $id("top_panel");
     let childs = topPanel.children;
 
-    // We redirect the manual page to EaglePB2's.
-    childs[16].value = "Eagle's Manual";
-    childs[16].setAttribute("onclick", "window.open('https://eaglepb2.gitbook.io/pb2-editor-manual/', '_blank');")
-
     // We will pad buttons, so we'll make our own pad and keep them here for now
     let bigPad = document.createElement("div");
     bigPad.setAttribute("class", "q3");
@@ -477,128 +1084,14 @@ function updateButtons() {
     }
     topPanel.appendChild(bigPad);
 
-    // "Download XML" button.
-    createButton("Download XML", "downloadXMLButton", () => {
-        let s = '';
-        for (const o in es) {
-            if (!es[o].exists) continue;
-            s += compi_obj(o);
-        }
-        const blob = new Blob([s], {type: 'application/xml'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = mapid + '.xml';
-        a.click();
-        a.remove()
-    });
     // Readd 'rights' back.
     topPanel.innerHTML += appendBack;
     // Update original reference
     window.mapid_field = $id("mapid_field");
-    mapid_field.value = mapid; // And update map id field value manually.
-}
 
-function addClipboardSync() {
-    let clipboard_channel = new BroadcastChannel("ale_clipboard");
-
-    ///////////////
-    // Receiving //
-    ///////////////
-    clipboard_channel.onmessage = (msg) => {
-        let data = msg.data;
-        let kind = data.kind;
-        if (kind == "send") {
-            let recipient = data.recipient;
-            let clip_name  = data.clip_name;
-            let clip_data  = data.clip_data;
-
-            if (recipient == undefined || recipient == aleiSessionID) {
-                aleiLog(DEBUG, '/ale_clipboard/ got data for ' + clip_name);
-                sessionStorage[clip_name] = clip_data;
-            }
-        }
-        if (kind == "get") {
-            if (aleiSessionID > Math.min(...aleiSessionList)) return;
-
-            let session_id = data.session_id;
-            aleiLog(DEBUG, '/ale_clipboard/ syncing to ' + session_id);
-            for (let i = 0; i <= 10; i++) {
-                let clip_name = "clipboard" + (i == 0 ? "" : ("_slot" + (i-1)));
-                let clip_data = sessionStorage[clip_name];
-                if (clip_data == undefined) continue;
-                clipboard_channel.postMessage({kind: "send", recipient: session_id, clip_name, clip_data});
-            }
-        }
-    }
-
-    // Initial Sync
-    aleiLog(DEBUG, '/ale_clipboard/ requesting');
-    clipboard_channel.postMessage({kind: "get", session_id: aleiSessionID});
-
-    /////////////
-    // Sending //
-    /////////////
-    let ALE_CopyToClipBoard = window.CopyToClipBoard;
-    window.CopyToClipBoard = (clip_name) => {
-        ALE_CopyToClipBoard(clip_name);
-        let clip_data = sessionStorage[clip_name];
-        clipboard_channel.postMessage({kind: "send", clip_name, clip_data});
-    }
-}
-
-async function addSessionSync() {
-    // This function registers some events, as to talk with other tabs
-    // For now, this is useful for clipboard sync, but we probably can have more.
-    const PROBE_TIMEOUT_MS = 200;
-    let session_channel = new BroadcastChannel("ale_session");
-
-    // Receive data
-    session_channel.onmessage = (msg) => {
-        let data = msg.data;
-        let kind = data.kind;
-        // New ALEI instance started up.
-        if (kind == "start") {
-            if (aleiSessionID == null) return;
-            session_channel.postMessage({kind: "greet", id: aleiSessionID});
-            aleiLog(DEBUG, "/ale_session/ recieved start");
-        }
-        // An ALEI instance responded to new ALEI instance, registering the ALEI instance
-        if (kind == "greet") {
-            let session_id = data.id;
-            if (!aleiSessionList.includes(session_id))
-                aleiSessionList.push(session_id);
-            aleiLog(DEBUG, "/ale_session/ received greet by " + session_id);
-        }
-        // An ALEI instance is closing
-        if (kind == "close") {
-            let session_id = data.id;
-            aleiSessionList.splice(aleiSessionList.indexOf(session_id), 1);
-            aleiLog(DEBUG, "/ale_session/ received close by " + session_id);
-        }
-    }
-
-    // Probe for other sessions
-    session_channel.postMessage({kind: "start"});
-    aleiLog(DEBUG, "/ale_session/ probing");
-    await new Promise(resolve => {
-        JS_setTimeout(resolve, PROBE_TIMEOUT_MS);
-    });
-
-    // Assign own session ID
-    if (aleiSessionList.length == 0)
-        aleiSessionID = 0;
-    else
-        aleiSessionID = Math.max(...aleiSessionList) + 1;
-
-    aleiLog(DEBUG, "/ale_session/ session ID " + aleiSessionID);
-
-    // Tell other sessions that this one is done
-    window.addEventListener('beforeunload', (event) => {
-        session_channel.postMessage({kind: "close", id: aleiSessionID});
-    });
-
-    addClipboardSync();
+	if (mapid) {
+		mapid_field.value = mapid; // And update map id field value manually.
+	}
 }
 
 function addPropertyPanelResize() {
@@ -719,7 +1212,6 @@ function patchUpdateTools() {
     aleiLog(DEBUG, "Patched updateTools.");
 }
 
-(async function() {
    'use strict';
     // Handling rest of things
     addPropertyPanelResize();
@@ -731,11 +1223,11 @@ function patchUpdateTools() {
     updateOffsets();
     updateObjects();
     updateButtons();
-    await addSessionSync();
     addTriggerIDs();
     patchShowHideButton();
     optimize();
     patchUpdateTools();
     NewNote("ALEI: Welcome!", "#7777FF");
     aleiLog(INFO, "Welcome!")
-})();
+
+}
