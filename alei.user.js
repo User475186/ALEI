@@ -1423,6 +1423,13 @@ function blackTheme() {
     setStyle("#tools_box", "overflow-y", "auto");
 }
 
+function updateLevelEditorInfo() {
+	let elem = document.getElementById("version_rights");
+	
+	elem.childNodes[0].childNodes[0].nodeValue = "ALE Improvements";
+	elem.childNodes[0].childNodes[2].nodeValue = "v9.6";
+}
+
 let targetElement;
 
 document.addEventListener("mousedown", e => {
@@ -2408,6 +2415,7 @@ let ALE_start = (async function() {
     patchRandomizeName();
     patchAllowedCharacters();
     patchSaveMap();
+	updateLevelEditorInfo();
     NewNote("ALEI: Welcome!", "#7777FF");
     aleiLog(INFO, "Welcome!")
     if (aleiSettings.blackTheme) {
