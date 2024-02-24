@@ -3360,6 +3360,12 @@ function addPasteFromPermanentClipboard() {
     window.pasteFromPermanentClipboard = pasteFromPermanentClipboard;
 }
 
+function patchConsoleTrace() {
+	window.ConsoleTace = function() {
+		;
+	}
+}
+
 let ALE_start = (async function() {
     'use strict';
     VAL_TABLE = special_values_table;
@@ -3415,6 +3421,8 @@ let ALE_start = (async function() {
 
     NewNote("ALEI: Welcome!", "#7777FF");
     aleiLog(INFO, `Welcome! TamperMonkey Version: ${GM_info.version} ALEI Version: ${GM_info.script.version}`);
+	
+	patchConsoleTrace();
 });
 
 document.addEventListener("DOMContentLoaded", () => ALE_start());
